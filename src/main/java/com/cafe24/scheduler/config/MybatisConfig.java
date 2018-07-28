@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import javax.sql.DataSource;
 import java.nio.charset.Charset;
@@ -19,9 +20,12 @@ public class MybatisConfig {
 
     @Bean
     public SqlSessionFactory sqlSessionFatory(DataSource datasource) throws Exception {
+        ResourcePatternResolver applicationContext = new PathMatchingResourcePatternResolver();
+
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(datasource);
-        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:/mapper/*.xml"));
+        sqlSessionFactory.setConfigLocation(applicationContext.getResource("classpath:/config/mybatis/mybatisConfig.xml"));
+        sqlSessionFactory.setMapperLocations(applicationContext.getResources("classpath:/mapper/*.xml"));
 
         return (SqlSessionFactory) sqlSessionFactory.getObject();
     }
